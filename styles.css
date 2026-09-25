@@ -33,7 +33,7 @@ header {
 }
 nav { display: flex; align-items: center; justify-content: space-between; padding: 16px 28px; max-width: 1280px; margin: 0 auto; }
 .logo-wrap { display: flex; align-items: center; }
-.logo-wrap img { height: 50px; width: auto; }
+.logo-wrap img { height: 72px; width: auto; }
 .menu-btn {
   background: none; border: none; color: var(--text);
   display: flex; flex-direction: column; gap: 5px; cursor: pointer; padding: 6px;
@@ -66,6 +66,13 @@ nav { display: flex; align-items: center; justify-content: space-between; paddin
   color: var(--text-dim);
 }
 .gender-choice a:hover, .gender-choice a.active-hint { color: var(--text); }
+
+.agency-stats {
+  display: flex; gap: 40px; margin-top: 48px; flex-wrap: wrap; justify-content: center;
+}
+.stat { text-align: center; }
+.stat-num { font-size: clamp(26px, 4vw, 38px); font-weight: 700; letter-spacing: -0.01em; }
+.stat-label { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px; }
 
 /* Sections */
 .section { padding: 80px 28px; }
@@ -130,4 +137,5 @@ footer a:hover { color: var(--text); }
   .section { padding: 56px 18px; }
   nav { padding: 14px 18px; }
   .menu-links a { font-size: 38px; }
+  .agency-stats { gap: 26px; margin-top: 32px; }
 }

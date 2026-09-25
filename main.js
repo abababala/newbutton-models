@@ -11,27 +11,53 @@ function setupMenu() {
 }
 
 // Model gender tabs
-let currentGender = 'female';
+let currentGender = 'women';
 let allModels = [];
+let modelsLoaded = false;
 
 function renderModels() {
   const grid = document.getElementById('model-grid');
-  const filtered = allModels.filter(m => (m.gender || 'female').toLowerCase() === currentGender);
+  const filtered = allModels.filter(m => (m.gender || 'women').toLowerCase() === currentGender);
+
+  if (!modelsLoaded) {
+    grid.innerHTML = `<div class="empty-state">Loading…</div>`;
+    return;
+  }
 
   if (!filtered.length) {
     grid.innerHTML = `<div class="empty-state">New faces coming soon.</div>`;
     return;
   }
 
-  grid.innerHTML = filtered.map(m => `
+  grid.innerHTML = filtered.map(m => {
+    const photos = Array.isArray(m.images) && m.images.length ? m.images : [m.image].filter(Boolean);
+    const mainPhoto = photos[0] || '';
+    return `
     <a class="model-card" href="#">
-      <img src="${m.image}" alt="${m.name}" loading="lazy">
+      <img src="${mainPhoto}" alt="${m.name}" loading="lazy">
       <div class="model-info">
         <div class="model-name">${m.name}</div>
-        <div class="model-meta">${m.category || ''}</div>
+        <div class="model-meta">${m.category || ''}${m.city ? ' · ' + m.city : ''}</div>
       </div>
     </a>
-  `).join('');
+  `;
+  }).join('');
+}
+
+function renderStats() {
+  const statsEl = document.getElementById('agency-stats');
+  if (!statsEl) return;
+  const total = allModels.length;
+  const women = allModels.filter(m => (m.gender || '').toLowerCase() === 'women').length;
+  const men = allModels.filter(m => (m.gender || '').toLowerCase() === 'men').length;
+  const cities = new Set(allModels.map(m => m.city).filter(Boolean)).size;
+
+  statsEl.innerHTML = `
+    <div class="stat"><div class="stat-num">${total}</div><div class="stat-label">Models</div></div>
+    <div class="stat"><div class="stat-num">${women}</div><div class="stat-label">Women</div></div>
+    <div class="stat"><div class="stat-num">${men}</div><div class="stat-label">Men</div></div>
+    <div class="stat"><div class="stat-num">${cities}</div><div class="stat-label">Cities</div></div>
+  `;
 }
 
 function setupTabs() {
@@ -54,9 +80,11 @@ function setupHeroChoice() {
       if (tab) {
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         tab.classList.add('active');
-        currentGender = gender;
-        renderModels();
       }
+      currentGender = gender;
+      // Always re-render, whether or not models have finished loading yet —
+      // once loadModels() resolves it calls renderModels() again with real data.
+      renderModels();
     });
   });
 }
@@ -71,7 +99,9 @@ async function loadModels() {
   } catch (e) {
     // stay empty silently
   }
+  modelsLoaded = true;
   renderModels();
+  renderStats();
 }
 
 // Get Scouted form — opens applicant's email app, pre-filled, addressed to the agency
