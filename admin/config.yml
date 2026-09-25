@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: ababalabala/newbutton-models
+  repo: abababala/newbutton-models
   branch: main
 
 media_folder: "images/models"
