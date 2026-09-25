@@ -90,7 +90,7 @@ function setupCastingForm() {
 
     const subject = encodeURIComponent('Get Scouted — ' + name);
     const body = encodeURIComponent(
-      `Name: ${name}\nEmail: ${email}\nGender: ${gender}\nHeight: ${height}\nCity: ${city}\n\nMessage:\n${message}`
+      `Name: ${name}\nEmail: ${email}\nGender: ${gender}\nHeight: ${height}\nCity: ${city}\n\nMessage:\n${message}\n\nReminder before sending: please attach two unedited photos (one close-up, one full length).`
     );
     window.location.href = `mailto:info@newbuttonmodels.com?subject=${subject}&body=${body}`;
   });
