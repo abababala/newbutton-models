@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: abababala/newbutton-models
+  repo: ababalabala/newbutton-models
   branch: main
 
 media_folder: "images/models"
@@ -25,7 +25,12 @@ collections:
         name: "category"
         widget: "select"
         options: ["Runway", "Editorial", "Streetwear", "Commercial"]
-      - { label: "Photo", name: "image", widget: "image" }
+      - { label: "Photo (main)", name: "image", widget: "image" }
+      - label: "Gallery (additional photos)"
+        name: "images"
+        widget: "list"
+        field: { label: "Photo", name: "image", widget: "image" }
+        required: false
       - { label: "Height", name: "height", widget: "string", required: false }
       - { label: "City", name: "city", widget: "string", required: false }
       - { label: "Active", name: "active", widget: "boolean", default: true }
