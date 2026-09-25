@@ -32,8 +32,9 @@ function renderModels() {
   grid.innerHTML = filtered.map(m => {
     const photos = Array.isArray(m.images) && m.images.length ? m.images : [m.image].filter(Boolean);
     const mainPhoto = photos[0] || '';
+    const href = m.slug ? `/models/${m.slug}` : '#';
     return `
-    <a class="model-card" href="#">
+    <a class="model-card" href="${href}">
       <img src="${mainPhoto}" alt="${m.name}" loading="lazy">
       <div class="model-info">
         <div class="model-name">${m.name}</div>
@@ -42,22 +43,6 @@ function renderModels() {
     </a>
   `;
   }).join('');
-}
-
-function renderStats() {
-  const statsEl = document.getElementById('agency-stats');
-  if (!statsEl) return;
-  const total = allModels.length;
-  const women = allModels.filter(m => (m.gender || '').toLowerCase() === 'women').length;
-  const men = allModels.filter(m => (m.gender || '').toLowerCase() === 'men').length;
-  const cities = new Set(allModels.map(m => m.city).filter(Boolean)).size;
-
-  statsEl.innerHTML = `
-    <div class="stat"><div class="stat-num">${total}</div><div class="stat-label">Models</div></div>
-    <div class="stat"><div class="stat-num">${women}</div><div class="stat-label">Women</div></div>
-    <div class="stat"><div class="stat-num">${men}</div><div class="stat-label">Men</div></div>
-    <div class="stat"><div class="stat-num">${cities}</div><div class="stat-label">Cities</div></div>
-  `;
 }
 
 function setupTabs() {
@@ -91,7 +76,10 @@ function setupHeroChoice() {
 
 async function loadModels() {
   try {
-    const res = await fetch('/models/models.json', { cache: 'no-store' });
+    // A cache-busting query string (instead of cache:'no-store') keeps this
+    // fetch fast and reliable on mobile browsers/proxies that handle
+    // no-store requests slowly or inconsistently.
+    const res = await fetch('/models/models.json?v=' + Date.now());
     if (res.ok) {
       const data = await res.json();
       if (Array.isArray(data)) allModels = data;
@@ -101,7 +89,6 @@ async function loadModels() {
   }
   modelsLoaded = true;
   renderModels();
-  renderStats();
 }
 
 // Get Scouted form — opens applicant's email app, pre-filled, addressed to the agency
@@ -126,10 +113,14 @@ function setupCastingForm() {
   });
 }
 
+// Start fetching model data as early as possible so it's ready (or close to
+// ready) by the time someone taps WOMEN/MEN, rather than waiting for the
+// DOMContentLoaded queue.
+loadModels();
+
 document.addEventListener('DOMContentLoaded', () => {
   setupMenu();
   setupTabs();
   setupHeroChoice();
   setupCastingForm();
-  loadModels();
 });

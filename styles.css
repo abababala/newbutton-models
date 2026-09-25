@@ -33,7 +33,7 @@ header {
 }
 nav { display: flex; align-items: center; justify-content: space-between; padding: 16px 28px; max-width: 1280px; margin: 0 auto; }
 .logo-wrap { display: flex; align-items: center; }
-.logo-wrap img { height: 72px; width: auto; }
+.logo-wrap img { height: 144px; width: auto; }
 .menu-btn {
   background: none; border: none; color: var(--text);
   display: flex; flex-direction: column; gap: 5px; cursor: pointer; padding: 6px;
@@ -67,13 +67,6 @@ nav { display: flex; align-items: center; justify-content: space-between; paddin
 }
 .gender-choice a:hover, .gender-choice a.active-hint { color: var(--text); }
 
-.agency-stats {
-  display: flex; gap: 40px; margin-top: 48px; flex-wrap: wrap; justify-content: center;
-}
-.stat { text-align: center; }
-.stat-num { font-size: clamp(26px, 4vw, 38px); font-weight: 700; letter-spacing: -0.01em; }
-.stat-label { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px; }
-
 /* Sections */
 .section { padding: 80px 28px; }
 .section-head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; gap: 24px; flex-wrap: wrap; }
@@ -99,6 +92,22 @@ nav { display: flex; align-items: center; justify-content: space-between; paddin
 .model-name { font-weight: 600; font-size: 16px; }
 .model-meta { font-size: 11.5px; color: var(--text-dim); margin-top: 2px; }
 .empty-state { grid-column: 1 / -1; padding: 52px 20px; text-align: center; color: var(--text-dim); font-size: 15px; }
+
+/* Individual model portfolio page */
+.back-link { font-size: 13px; color: var(--text-dim); letter-spacing: 0.02em; }
+.back-link:hover { color: var(--text); }
+.portfolio-hero { width: 100%; max-height: 92vh; overflow: hidden; background: var(--bg-raised); }
+.portfolio-hero img { width: 100%; height: 100%; max-height: 92vh; object-fit: cover; display: block; }
+.portfolio-info { padding-top: 40px; padding-bottom: 24px; }
+.portfolio-name { font-size: clamp(28px, 5vw, 48px); }
+.portfolio-meta { font-size: 14px; color: var(--text-dim); margin-top: 10px; letter-spacing: 0.02em; }
+.portfolio-gallery-section { padding-top: 0; }
+.portfolio-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; max-width: 1280px; margin: 0 auto; }
+.portfolio-photo { aspect-ratio: 3/4; overflow: hidden; background: var(--bg-raised); }
+.portfolio-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+@media (max-width: 640px) {
+  .portfolio-gallery { grid-template-columns: repeat(2, 1fr); }
+}
 
 /* Get Scouted form */
 .casting-form { max-width: 560px; display: flex; flex-direction: column; gap: 16px; }
@@ -137,5 +146,4 @@ footer a:hover { color: var(--text); }
   .section { padding: 56px 18px; }
   nav { padding: 14px 18px; }
   .menu-links a { font-size: 38px; }
-  .agency-stats { gap: 26px; margin-top: 32px; }
 }
