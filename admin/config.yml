@@ -1,9 +1,9 @@
 backend:
   name: github
-  repo: ababalabala/newbutton-models
+  repo: abababala/newbutton-models
   branch: main
   base_url: https://sveltia-cms-auth.allanaminu247.workers.dev
-  auth_endpoint: callback
+  auth_endpoint: auth
 
 media_folder: "images/models"
 public_folder: "/images/models"
