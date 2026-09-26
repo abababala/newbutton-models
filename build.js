@@ -1,0 +1,178 @@
+// Builds models/models.json and one static portfolio page per active model
+// (models/<slug>.html). This is the GitHub Actions equivalent of the old
+// Netlify build plugin — same logic, just run as a plain Node script instead
+// of a Netlify-specific plugin hook.
+const fs = require('fs');
+const path = require('path');
+
+function stripQuotes(val) {
+  return val.trim().replace(/^["']|["']$/g, '');
+}
+
+function parseFrontmatter(raw) {
+  const match = raw.match(/^---\n([\s\S]*?)\n---/);
+  if (!match) return null;
+  const lines = match[1].split('\n');
+  const obj = {};
+  let i = 0;
+
+  while (i < lines.length) {
+    const line = lines[i];
+    const colonIdx = line.indexOf(':');
+    if (colonIdx === -1) { i++; continue; }
+
+    const key = line.slice(0, colonIdx).trim();
+    const rest = line.slice(colonIdx + 1).trim();
+
+    if (rest === '') {
+      const items = [];
+      let j = i + 1;
+      while (j < lines.length && /^\s*-\s/.test(lines[j])) {
+        const itemLine = lines[j].replace(/^\s*-\s*/, '');
+        const subColon = itemLine.indexOf(':');
+        if (subColon !== -1) {
+          items.push(stripQuotes(itemLine.slice(subColon + 1)));
+        } else {
+          items.push(stripQuotes(itemLine));
+        }
+        j++;
+      }
+      obj[key] = items;
+      i = j;
+    } else {
+      obj[key] = stripQuotes(rest);
+      i++;
+    }
+  }
+  return obj;
+}
+
+function slugify(name) {
+  return (name || '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') || 'model';
+}
+
+function escapeHtml(str) {
+  return (str || '').replace(/[&<>"']/g, (c) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  }[c]));
+}
+
+function buildPortfolioHtml(model) {
+  const photos = model.images.length ? model.images : [model.image].filter(Boolean);
+  const [mainPhoto, ...restPhotos] = photos;
+  const galleryHtml = restPhotos.map(src => `
+        <div class="portfolio-photo"><img src="${escapeHtml(src)}" alt="${escapeHtml(model.name)}" loading="lazy"></div>`).join('');
+  const metaBits = [model.category, model.height, model.city].filter(Boolean);
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${escapeHtml(model.name)} — Newbutton Models</title>
+<link rel="icon" href="../favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="../favicon-192.png">
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+
+<header>
+  <nav>
+    <a class="logo-wrap" href="../"><img src="../favicon.png" alt="Newbutton Models" style="height:48px;width:auto;border-radius:6px;"></a>
+    <a class="back-link" href="../#models">&larr; All Models</a>
+  </nav>
+</header>
+
+<section class="portfolio-hero">
+  ${mainPhoto ? `<img src="${escapeHtml(mainPhoto)}" alt="${escapeHtml(model.name)}">` : ''}
+</section>
+
+<section class="section portfolio-info">
+  <div class="wrap">
+    <h1 class="display portfolio-name">${escapeHtml(model.name)}</h1>
+    ${metaBits.length ? `<div class="portfolio-meta">${metaBits.map(escapeHtml).join(' &middot; ')}</div>` : ''}
+  </div>
+</section>
+
+${restPhotos.length ? `<section class="section portfolio-gallery-section">
+  <div class="wrap">
+    <div class="portfolio-gallery">${galleryHtml}
+    </div>
+  </div>
+</section>` : ''}
+
+<footer>
+  <span class="footer-loc">London &middot; Lagos &middot; Los Angeles</span>
+  <div class="footer-links">
+    <a href="mailto:info@newbuttonmodels.com">info@newbuttonmodels.com</a>
+    <a href="https://instagram.com/newbuttonmodels" target="_blank" rel="noopener">Instagram</a>
+    <a href="https://tiktok.com/@newbuttonmodels" target="_blank" rel="noopener">TikTok</a>
+  </div>
+  <span>&copy; 2026 Newbutton Management</span>
+</footer>
+
+</body>
+</html>
+`;
+}
+
+function main() {
+  const modelsDir = path.join(process.cwd(), 'models');
+  if (!fs.existsSync(modelsDir)) {
+    console.log('No models directory found, skipping.');
+    return;
+  }
+
+  // Clean up portfolio pages from a previous build so removed/renamed
+  // models don't leave stale pages behind.
+  fs.readdirSync(modelsDir)
+    .filter(f => f.endsWith('.html'))
+    .forEach(f => fs.unlinkSync(path.join(modelsDir, f)));
+
+  const files = fs.readdirSync(modelsDir).filter(f => f.endsWith('.md'));
+  const usedSlugs = new Set();
+
+  const models = files.map(f => {
+    const raw = fs.readFileSync(path.join(modelsDir, f), 'utf8');
+    const meta = parseFrontmatter(raw);
+    if (!meta) return null;
+    const gallery = Array.isArray(meta.images) ? meta.images.filter(Boolean) : [];
+    const mainImage = meta.image || '';
+
+    let slug = slugify(meta.name);
+    let uniqueSlug = slug;
+    let n = 2;
+    while (usedSlugs.has(uniqueSlug)) {
+      uniqueSlug = `${slug}-${n}`;
+      n++;
+    }
+    usedSlugs.add(uniqueSlug);
+
+    return {
+      name: meta.name || '',
+      slug: uniqueSlug,
+      gender: (meta.gender || 'women').toLowerCase(),
+      category: meta.category || '',
+      image: mainImage,
+      images: [mainImage, ...gallery].filter(Boolean),
+      height: meta.height || '',
+      city: meta.city || '',
+      active: meta.active !== 'false',
+    };
+  }).filter(m => m && m.active);
+
+  fs.writeFileSync(path.join(modelsDir, 'models.json'), JSON.stringify(models, null, 2));
+
+  models.forEach(model => {
+    const html = buildPortfolioHtml(model);
+    fs.writeFileSync(path.join(modelsDir, `${model.slug}.html`), html);
+  });
+
+  console.log(`Built models.json with ${models.length} active model(s) and ${models.length} portfolio page(s).`);
+}
+
+main();
