@@ -2,6 +2,10 @@ backend:
   name: github
   repo: abababala/newbutton-models
   branch: main
+  # After deploying the Cloudflare Worker, replace YOUR-WORKER-URL below
+  # with the Worker's real address, e.g. https://newbutton-oauth.you.workers.dev
+  base_url: https://YOUR-WORKER-URL
+  auth_endpoint: auth
 
 media_folder: "images/models"
 public_folder: "/images/models"
