@@ -5,7 +5,7 @@ backend:
   # After deploying the Cloudflare Worker, replace YOUR-WORKER-URL below
   # with the Worker's real address, e.g. https://newbutton-oauth.you.workers.dev
      base_url: https://sveltia-cms-auth.allanaminu247.workers.dev
-  auth_endpoint: auth
+  auth_endpoint: callback
 
 media_folder: "images/models"
 public_folder: "/images/models"
