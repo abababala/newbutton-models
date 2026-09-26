@@ -1,10 +1,8 @@
 backend:
   name: github
-  repo: abababala/newbutton-models
+  repo: ababalabala/newbutton-models
   branch: main
-  # After deploying the Cloudflare Worker, replace YOUR-WORKER-URL below
-  # with the Worker's real address, e.g. https://newbutton-oauth.you.workers.dev
-     base_url: https://sveltia-cms-auth.allanaminu247.workers.dev
+  base_url: https://sveltia-cms-auth.allanaminu247.workers.dev
   auth_endpoint: callback
 
 media_folder: "images/models"
