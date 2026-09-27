@@ -8,6 +8,6 @@ images:
   - /images/models/img_3773.jpeg
   - /images/models/img_3775.jpeg
 height: 5'9" (175cm), 33-25-35, size 4
-city: "Los Angeles- International "
+city: "US • International "
 active: true
 ---
