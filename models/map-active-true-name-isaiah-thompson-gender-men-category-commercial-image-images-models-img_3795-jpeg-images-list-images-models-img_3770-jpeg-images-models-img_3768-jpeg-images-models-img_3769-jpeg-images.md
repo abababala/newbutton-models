@@ -9,7 +9,7 @@ images:
   - /images/models/img_3796.jpeg
   - /images/models/img_3797.jpeg
   - /images/models/img_3798.jpeg
-  - /images/models/img_3768.jpeg
+  - /images/models/img_3768_snapseedcopy.jpeg
 height: 6'0" (183cm), Chest 38", Waist 30
 city: "US • International "
 active: true
