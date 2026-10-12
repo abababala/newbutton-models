@@ -13,5 +13,5 @@ images:
   - /images/models/img_3824.jpeg
 height: 5'8" (173cm), 34-26-36, size 6
 city: "Africa • International "
-active: true
+active: false
 ---
