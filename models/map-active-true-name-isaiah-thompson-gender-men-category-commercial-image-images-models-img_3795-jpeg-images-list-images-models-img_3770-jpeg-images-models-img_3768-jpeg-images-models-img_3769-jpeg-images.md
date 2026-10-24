@@ -1,8 +1,8 @@
 ---
-name: Isaiah Thompson
+name: "Kibb "
 gender: men
 category: Commercial
-image: /images/models/img_3795.jpeg
+image: /images/models/img_3796.jpeg
 images:
   - /images/models/img_3770.jpeg
   - /images/models/img_3769.jpeg
