@@ -1,5 +1,5 @@
 ---
-name: Kristin Reed
+name: "Kristin "
 gender: women
 category: Commercial
 image: /images/models/img_4639.jpeg
